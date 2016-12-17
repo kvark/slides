@@ -1,0 +1,41 @@
+<html>
+
+<head>
+<title>WebMetal test</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript">
+    var context;
+    var red = 0.0;
+
+    function webMetalStart() {
+        var canvas = document.getElementById("test-canvas");
+        context = canvas.getContext("experimental-webmetal");
+        if (!context) {
+            alert("Could not initialise WebMetal, sorry :-(");
+        }
+        setInterval(webMetalRender, 60);
+    }
+
+    function webMetalRender() {
+        var target = context.nextFrameTarget();
+        var commandBuffer = context.makeCommandBuffer();
+
+        var renderEncoder = commandBuffer.makeRenderCommandEncoder({
+            color0: { view: target, clear: [red, 0.2, 0.3, 1.0] },
+        });
+        renderEncoder.endEncoding();
+
+        red += 0.05;
+        if (red >= 1.0) red -= 1.0;
+
+        commandBuffer.commit();
+        context.endFrame();
+    }
+</script>
+</head>
+
+<body onload="webMetalStart();">
+<canvas id="test-canvas" style="border: none;" width="720" height="400"></canvas>
+</body>
+</html>
