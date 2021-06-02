@@ -8,6 +8,8 @@ marp: true
 
 WebGPU implementation in Rust
 
+Dzmitry Malyshau, 2021
+
 ---
 
 # Project goals
@@ -60,19 +62,19 @@ WebGPU implementation in Rust
 
 Pros:
 - quick to address issues (limited to core only)
-- tracking through BugZilla, landing via Phabricator (also core only)
+- tracking through Bugzilla, landing via Phabricator (also core only)
 - testing on WebGPU CTS
 
 Cons:
 - killing external contribution
-- effectively forking `wgpu` (!)
-- increasing latency from 15 minutes to up to 24 hours
+- effectively *forking* `wgpu`
+- increasing merge latency from 15 minutes to up to 24 hours
 
 ---
 
 # GitHub upstream
 - can also run WebGPU CTS on CI - minimizes chance of Gecko breakage
 - well-defined API boundary (unlike WebRender) - reduces integration breakage
-- keeps the community momentum, benefits from external work
+- keeps the community momentum, lowe entry barrier, and benefits from external work
 - there is still a workflow for urgent fixes: via a fork an a cargo override in Gecko. Works for any component, not just the core.
-- we already do this in Neko, Rkv, and other projects
+- we already do this in Neqo, Rkv, and other projects
