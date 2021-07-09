@@ -1,7 +1,3 @@
----
-marp: true
----
-
 # wgpu-hal
 
 Why another portable GPU abstraction?
@@ -13,7 +9,7 @@ Dzmitry Malyshau
 Plan
 1. **Positioning**
 2. Architecture
-3. Workflow
+3. State
 
 ---
 
@@ -21,6 +17,7 @@ Plan
 - portable subset of native APIs
 - no overhead
 - well aligned with WebGPU
+- Rust all the way
 - fully unsafe, but still usable
 
 ---
@@ -43,8 +40,6 @@ Example from gfx-hal at some point:
         I::IntoIter: ExactSizeIterator;
 ```
 
----
-
 Same with wgpu-hal today:
 ```rust
 unsafe fn invalidate_mapped_ranges<I>(&self, buffer: &A::Buffer, ranges: I)
@@ -57,7 +52,7 @@ unsafe fn invalidate_mapped_ranges<I>(&self, buffer: &A::Buffer, ranges: I)
 Plan
 1. Positioning
 2. **Architecture**
-3. Workflow
+3. State
 
 ---
 
@@ -129,6 +124,24 @@ Resulution: closest to D3D12 model, but with WebGPU states.
 
 ---
 
+### Data transfers
+
+```rust
+/// Copy from texture to buffer.
+/// Works with a single array layer.
+unsafe fn copy_texture_to_buffer<T>(
+    &mut self,
+    src: &A::Texture,
+    src_usage: TextureUses,
+    dst: &A::Buffer,
+    regions: T,
+) where
+    T: Iterator<Item = BufferTextureCopy>;
+```
+Resolution: intersection of the APIs, but with flexibility of Vulkan.
+
+---
+
 ### Command pools:
 ```rust
 pub trait CommandEncoder<A: Api>: Send + Sync {
@@ -149,53 +162,38 @@ Resulution: D3D12 model with much nicer types.
 
 ---
 
+### Other things
+
+- shader modules
+- queries
+- presentable surfaces
+
+---
+
 Plan
 1. Positioning
 2. Architecture
-3. **Workflow**
+3. **State**
 
 ---
 
-## Module structure
+## State
 
-`mod.rs`:
-```rust
-impl crate::Api for Api {...}
-
-pub struct Device { // public if they have to be
-    shared: Arc<AdapterShared>, // all shared
-    features: wgt::Features,
-}
-```
-`device.rs`:
-```rust
-impl crate::Device for super::Device {...}
-```
+- [x] Vulkan
+- [x] Metal
+- [x] OpenGL ES-3
+- [ ] D3D12
 
 ---
 
-## Clippy
-```rust
-#![allow(
-    clippy::match_like_matches_macro, // We don't use syntax sugar where it's not necessary.
-    clippy::redundant_pattern_matching, // Redundant matching is more explicit.
-    clippy::single_match, // Matches are good and extendable, no need to make an exception here.
-    clippy::needless_lifetimes, // Explicit lifetimes are often easier to reason about.
-    clippy::new_without_default, // No need for defaults in the internal types.
-    clippy::vec_init_then_push, // Push commands are more regular than macros.
-)]
-#![warn(
-    trivial_casts,
-    trivial_numeric_casts,
-    unused_extern_crates,
-    unused_qualifications,
-    // We don't match on a reference, unless required.
-    clippy::pattern_type_mismatch,
-)]
-```
+## Code
 
----
+Each backend is roughly 5K LOC.
 
-## Benchmarks
+This is ~2x less than gfx-rs backends.
 
-roughly 2x more sprites for the same frame time, comparing to wgpu-core
+### Perf
+
+Performance-wise, we can output 2x more sprites
+
+for the same frame time, comparing to wgpu-core.

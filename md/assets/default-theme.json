@@ -1,5 +1,5 @@
 {
-    "background_image": "assets/background.png",
+    "background_image": "assets/wgpu-background.png",
     "background_color": "#753204",
     "heading_color": "#8f4d22",
     "text_color": "#cccccc",
