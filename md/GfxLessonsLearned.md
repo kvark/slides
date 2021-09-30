@@ -22,9 +22,11 @@ What is gfx-rs?
 
 RIP 2014 - 2021
 
-<!-- as many projects, it started with something that
-is very far from what it ended -->
-<!-- we'll go through case studies and extact lessons -->
+<!-- footer: '
+As many projects, it started with something that is very far from what it ended.
+
+We will go through case studies and extact lessons. With some memes to help.
+' -->
 
 <!-- ts: 1:00 -->
 
@@ -39,8 +41,8 @@ is very far from what it ended -->
 - resource bindings
 - render targets
 
+<!-- footer: '' -->
 <!-- ts: 2:00 -->
-
 ---
 
 ## Macros
@@ -75,9 +77,10 @@ Macros were also very difficult to write and debug, not properly supported by to
 ### Lesson-1
 _Stay away from macros_, unless strictly necessary.
 
-<!-- We used them because we were still learning the 
-language (way before 1.0), no best practices were known. -->
-
+<!-- footer: '
+We used them because we were still learning the 
+language (way before 1.0), no best practices were known.
+' -->
 <!-- ts: 4:00 -->
 ---
 
@@ -92,6 +95,7 @@ language (way before 1.0), no best practices were known. -->
 ```
 Most state is explicitly provided for each draw, then compared against the current to generate the state changes internally.
 
+<!-- footer: '' -->
 <!-- ts: 4:45 -->
 ---
 
@@ -109,8 +113,9 @@ Also, deducing the internal state changes means the overhead is not explicit, an
 ### Lesson-2
 _Functional style isn't universally better_. It needs to be practical and match the target domain. Computer graphics is inherently stateful, and there is a performance cost to trying to change this.
 
-<!-- stack-based approach might have been better: [Luminance](https://github.com/phaazon/luminance-rs) has some of it. -->
-
+<!-- footer: '
+Stack-based approach might have been better: [Luminance](https://github.com/phaazon/luminance-rs) has some of it.
+' -->
 <!-- ts: 6:45 -->
 ---
 
@@ -126,6 +131,8 @@ impl<'a> DataLink<'a> for RawRenderTarget {
     ...
 }
 ```
+
+<!-- footer: '' -->
 <!-- ts: 7:45 -->
 ---
 
@@ -138,14 +145,17 @@ impl<'a> DataLink<'a> for RawRenderTarget {
 Even more *confusion*!
 Users basically followed the magic incantations without fully understanding them.
 
+---
+
 ### Lesson-3
 _Always build types *over* plain data_, not the other way around.
 If unsure, start with simple data and functions. Make typed layer optional.
 
-<!-- related to Vulkano? >
+<!-- footer: '
+In this case, the user should choose between using typed layer or not typed. Instead, they picked between the typed layer and the raw typed abomination over it.
 
-<!-- In this case, the user should choose between using typed layer or not typed. Instead, they picked between the typed layer and the raw typed abomination over it. -->
-
+Somewhat related to Vulkano.
+' -->
 <!-- ts: 9:00 -->
 ---
 
@@ -155,13 +165,16 @@ In the API users defined graphics pipelines. This matches the concept in modern 
 
 > We are ready for the next gen!
 
-<!-- describe the idea and motivation for the pipelines -->
-
+<!-- footer: '
+We can eliminate a class of errors by requiring users to provide all information every time... Does not solve the problem.
+' -->
 <!-- ts: 10:00 -->
 ---
 
 ### Result
 pre-ll pipelines never ended up being translated into the *real* graphics pipelines of modern APIs. There were other obstacles preventing the modern backends to be written (object lifetime on GPU, descriptors, etc).
+
+<!-- footer: '' -->
 
 ---
 
@@ -170,9 +183,10 @@ _Don't design for the unknown future_. Design for the known today instead.
 
 There are many reasons for the design to need to change, and clarifying the future is just one of them.
 
-<!-- very similar to an advice you can read on various
-posts and threads, e.g. on HN -->
-
+<!-- footer: '
+Very similar to the advice you can read on various
+posts and threads, e.g. on HN.
+' -->
 <!-- ts: 11:30 -->
 ---
 
@@ -182,6 +196,8 @@ posts and threads, e.g. on HN -->
 
 _Users need solutions_. A GPU abstraction without a common entry point for shaders is just a part of a solution.
 
+<!-- footer: '' -->
+<!-- ts: 12:0 -->
 ---
 
 # Epoch: gfx-hal
@@ -192,16 +208,19 @@ Oct 2017 - Summer 2021
 
 ---
 
-- follow **Vulkan** precisely, worship **Khronos**
-  - participate in [Vulkan Portability Initiative](https://www.vulkan.org/portability)
-- include all the nasty details, like render sub-passes and explicit memory control (i.e. be unopinionated)
-- but expect other higher-level libraries to bridge the gap
+## API Alignment
+Follow **Vulkan** precisely, worship **Khronos**. Participate in [Vulkan Portability Initiative](https://www.vulkan.org/portability)
 
+Include all the nasty details, like render sub-passes and explicit memory control (i.e. be unopinionated)
+
+<!-- ts: 13:00 -->
 ---
 
 ![Keep Repo](GfxLessonsLearned/OneDoesntSimply.jpg)
 
 https://github.com/gfx-rs/gfx
+
+<!-- ts: 13:20 -->
 
 ---
 
@@ -210,6 +229,10 @@ Users *still* get confused on what gfx-rs is.
 
 Branding is important. Heritage needs to be preserved. Replacing the project on the same repository with a different one causes too much pain and confusion in the long run.
 
+<!-- footer: '
+Transition killed most of the contributors and users.
+' -->
+<!-- ts: 14:00 -->
 ---
 
 ## Zero-cost abstraction
@@ -223,7 +246,10 @@ Branding is important. Heritage needs to be preserved. Replacing the project on 
         I::IntoIter: ExactSizeIterator;
 ```
 
-
+<!-- footer: '
+There are always costs: debug run-time cost, compile time cost, maintenance cost, mental overhead.'
+-->
+<!-- ts: 15:00 -->
 ---
 
 ### Result
@@ -233,10 +259,13 @@ Wasting time trying to navigate the types jungle.
 Types can be overwhelming and inefficient. They hinder debugging, compile times, API usability.
 Reaching safety with run-time checks is a perfectly valid alternative.
 
+<!-- footer: '' -->
+<!-- ts: 16:00 -->
 ---
 
 ![We know Vulkan](GfxLessonsLearned/WeKnowVulkan.jpg)
 
+<!-- ts: 16:20 -->
 ---
 
 Put a ton of trust into Vulkan as well as **ourselves**.
@@ -247,6 +276,11 @@ There is a lot of complexity, and a lot of tribal knowledge.
 
 And we signed oursevels to be *slaves* of the decisions made by Vulkan working group.
 
+<!-- ts: 17:30 -->
+---
+
+![Climbing Vulkan](GfxLessonsLearned/ClimbingVulkan.jpg)
+
 ---
 
 ### Lesson-8
@@ -256,12 +290,15 @@ If something is open and developed in collaboration, we **want** it to be the be
 
 An API developed behind closed doors with tight feedback loop from developers can feature better designs.
 
+<!-- footer: '
 Examples: copy alignments, sub-passes, resource states.
+' -->
 
 ---
 
 ![Take Vulkan](GfxLessonsLearned/GruTakeVulkan.jpg)
 
+<!-- footer: '' -->
 ---
 
 ### Result
@@ -272,7 +309,9 @@ _Put users first_. Serve real needs.
 
 Building the foundation without a good understanding of higher levels is a recipe for disaster.
 
-<!-- I.e. could bring wgpu-rs *before* gfx-hal -->
+<!-- footer: '
+I.e. could bring wgpu-rs *before* gfx-hal.
+' -->
 
 ---
 
@@ -280,31 +319,43 @@ Building the foundation without a good understanding of higher levels is a recip
 Being universal and unopinionated is *not* a feature. It's an instrument to build something **actually useful** on top. 
 But once it's build, there is an inevitable temptation to avoid compromises. **Opinionated >> Universal**.
 
+<!-- footer: '' -->
 ---
 
 ### Lesson-9c
 Low level primitives are as **re-usable** as narrow their API is. gfx-hal API is large.
 
+<!-- footer: '
+If gfx-hal had a smaller API, there would be much higher chance for other libraries to pick it up and build on top.
+' -->
+
 ---
 
 ### Result
-We built gfx-portability and beat MoltenVK in performance...
-Nobody cared:
+We built gfx-portability and beat MoltenVK in performance... **Nobody cared:**
   - Rust users don't care about C APIs
   - C users just need something that survives long enough
 
 ### Lesson-10
 Fighting against the flow is hard
 
+<!-- footer: '
+Nobody woke up in the morning thinking:
+I am going to make VkPi run superb for my app.
+' -->
+
 ---
 
 ## Community
 
+![Github Stars](GfxLessonsLearned/GfxStars.png)
+
 Commits: 6K+
 Contributors: 255, and growing
 Code: 65K LOC, and growing
-Maintainers: 1
+**Maintainers: 1**
 
+<!-- footer: '' -->
 <!--
 - "Initial stub for mesh shaders" +785 −335
 - "Direct display feature" +1,483 −80
@@ -344,7 +395,7 @@ Metrics: 2.5-3x less code, faster compile times.
 
 # what's next?
 
-gfx-rs repository is in maintenance mode.
+gfx-rs repository is in **maintenance** mode.
 But the ideas of gfx-rs live on within wgpu-hal and wgpu-rs.
 
 --- 
