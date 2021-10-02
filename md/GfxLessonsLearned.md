@@ -235,6 +235,24 @@ Transition killed most of the contributors and users.
 <!-- ts: 14:00 -->
 ---
 
+## Backends
+
+Each backend in a separate crate: gfx-backend-vulkan/metal/gl/etc.
+Everything on the user side is generic over `<B: hal::Backend>`.
+
+<!-- footer: '' -->
+---
+
+### Result
+
+`<B>` bubbling up all the way to the top of user code, ruining abstraction, crawling into seemingly unrelated things, like `Camera<B>`.
+
+### Lesson-7
+
+If you don't know how users can solve a problem, it's your problem.
+
+---
+
 ## Zero-cost abstraction
 
 ```rust
@@ -247,15 +265,15 @@ Transition killed most of the contributors and users.
 ```
 
 <!-- footer: '
-There are always costs: debug run-time cost, compile time cost, maintenance cost, mental overhead.'
--->
+There are always costs: debug run-time cost, compile time cost, maintenance cost, mental overhead.
+' -->
 <!-- ts: 15:00 -->
 ---
 
 ### Result
 Wasting time trying to navigate the types jungle.
 
-### Lesson-7
+### Lesson-8
 Types can be overwhelming and inefficient. They hinder debugging, compile times, API usability.
 Reaching safety with run-time checks is a perfectly valid alternative.
 
@@ -283,7 +301,7 @@ And we signed oursevels to be *slaves* of the decisions made by Vulkan working g
 
 ---
 
-### Lesson-8
+### Lesson-9
 _Recognize your assumptions and wishful thinking._
 
 If something is open and developed in collaboration, we **want** it to be the best thing in the world. But we should not assume that.
@@ -304,7 +322,7 @@ Examples: copy alignments, sub-passes, resource states.
 ### Result
 We couldn't build any decent high-level abstraction... Users were crushing into the complexity and leaving.
 
-### Lesson-9a
+### Lesson-10a
 _Put users first_. Serve real needs.
 
 Building the foundation without a good understanding of higher levels is a recipe for disaster.
@@ -315,14 +333,14 @@ I.e. could bring wgpu-rs *before* gfx-hal.
 
 ---
 
-### Lesson-9b
+### Lesson-10b
 Being universal and unopinionated is *not* a feature. It's an instrument to build something **actually useful** on top. 
 But once it's build, there is an inevitable temptation to avoid compromises. **Opinionated >> Universal**.
 
 <!-- footer: '' -->
 ---
 
-### Lesson-9c
+### Lesson-10c
 Low level primitives are as **re-usable** as narrow their API is. gfx-hal API is large.
 
 <!-- footer: '
@@ -331,12 +349,26 @@ If gfx-hal had a smaller API, there would be much higher chance for other librar
 
 ---
 
+## gfx-portability
+
+Vulkan on top of anything, via gfx-rs.
+- heavy contributor to Vulkan Portability
+- beat MoltenVK in Dota and Dolphin Emultator
+- first to run Vulkan CTS on macOS
+
+<!-- footer: '' -->
+---
+
+![Me Yelling at devs](GfxLessonsLearned/MeYelling.jpg)
+
+---
+
 ### Result
-We built gfx-portability and beat MoltenVK in performance... **Nobody cared:**
+**Nobody cared:**
   - Rust users don't care about C APIs
   - C users just need something that survives long enough
 
-### Lesson-10
+### Lesson-11
 Fighting against the flow is hard
 
 <!-- footer: '
@@ -369,7 +401,7 @@ Code: 65K LOC, and growing
 
 ---
 
-### Lesson
+### Lesson-12
 
 Contributor/commit counts and project stats are unlikely important, at all.
 
