@@ -20,15 +20,19 @@ Rust Los Angeles Meetup, 2021
 ---
 
 Plan:
-  1. A sad situation
-  2. The new hope
+  1. Surrounded by C
+  2. In Rust We Trust
   3. Results
 
 ---
 
 # Part I: Surrounded by C
 
+<!-- footer: '
+Both the languages look like C, and the tools are all in C.
+' -->
 ---
+<!-- footer: ''-->
 
 ## Level-1: Starter pack
 
@@ -44,12 +48,12 @@ Plan:
 
 ### GL/GLSL
 
-Easy to write, easy to run.
-
 *Tooling*: basic *pre-processing*.
 *Issues*: poor support, debugging.
 
 <!-- footer: '
+Preprocessing is needed for "#vesion" and in/out/varying.
+
 GL implementations are all over the place.
 Every IHV has its own interpretation.
 https://github.com/servo/webrender/wiki/Driver-issues
@@ -71,9 +75,7 @@ https://github.com/servo/webrender/wiki/Driver-issues
 
 ### GLSL -> SPIR-V
 
-Still easy to write, but hard to run.
-
-*Tooling*: "glslang" (via "shaderc")
+*Tooling*: `glslang` (via "shaderc")
 *Issues*: big C dependency, non-portable.
 
 ---
@@ -92,8 +94,11 @@ Still easy to write, but hard to run.
 
 > Currently shaderc can't be run in parallel at all, it will internally synchronize all threads in GlslangInitializer::Acquire which has a global mutex.
 
-
+<!-- footer: '
+C dependencies often dont like multi-threading.
+' -->
 ---
+<!-- footer: ''-->
 
 Wait...
 Vulkan + SPIR-V
@@ -105,9 +110,9 @@ non-portable?
 
 ---
 
-## Level 3: Portability
+## Level 3: Reach
 
-> Everything can be solved by another layer of abstraction
+> If the mountain won't come to Muhammad...
 
 ![cavalier](ProcessingShaders/l3-cavalier.gif)
 
@@ -117,8 +122,6 @@ non-portable?
 ---
 
 ### GLSL -> SPIRV -> MSL/HLSL/GLSL/etc
-
-Still easy to write, but very hard to run.
 
 *Tooling*: SPIRV-Cross
 *Issues*: huge C dependency, slow.
@@ -138,7 +141,7 @@ if skip_objects && (
 ```
 ---
 
-### C horror-3:
+### C horror-3: libstc++ conflict
 
 [denoland/rusty_v8#465](https://github.com/denoland/rusty_v8/issues/465)
 
@@ -146,7 +149,7 @@ if skip_objects && (
 
 ---
 
-### Other C dep weirdness
+### Bonus: compiling C->Rust->C
 
 [alexcrichton/cc-rs#454](https://github.com/alexcrichton/cc-rs/issues/454)
 
@@ -158,7 +161,7 @@ if skip_objects && (
 
 ---
 
-## Level π: Stubborn
+## Level π: Convergence
 
 > I don't need no shading language
 
@@ -326,9 +329,9 @@ Initial architecture:
 
 ---
 
-### Principle: Pure Rust
+### Why Rust?: enums
 
-**Enums** is a killer feature for compiler tech:
+Killer feature for compiler tech
 
 ```rust
 pub enum Binding {
@@ -343,20 +346,30 @@ pub enum Binding {
 
 ---
 
+### Why Rust?: tests
+
+```rust
+#[test]
+fn function_without_identifier() {
+    check(
+        "fn () {}",
+        r###"error: expected identifier, found '('
+  ┌─ wgsl:1:4
+  │
+1 │ fn () {}
+  │    ^ expected identifier
+
+"###,
+    );
+}
+```
+
+---
+
 ### Principle: Cache-friendly
 
 Everything is an array, indexed, grow-only.
 *Types, constants, functions, expressions, etc*
-
----
-
-### Principle: Safe and Sound
-
-```rust
-#![deny(clippy::panic)]
-```
-
-Only unsafe code is isolated in `Arena`.
 
 ---
 
@@ -372,13 +385,13 @@ module **IR** | validator | derived info
 
 ### Naga: Parsing
 
-We tried many helper crates: pest, nom, glsl.
+We tried many helper crates: `pest`, `glsl`/`nom`.
 *General issue*: split of responsibilities.
 Ended up with *recursive descend*.
 
 ---
 
-### Naga: Criss-Cross Testing
+### Naga: Snapshot Testing
 
 *Backends*: WGSL -> anything
 *Frontends*: anything -> WGSL
@@ -413,7 +426,7 @@ IR behind the scenes.
 
 ---
 
-## Level 4: Pure
+## Level 4: Purity
 
 ![angel](ProcessingShaders/l4-angel.gif)
 
@@ -449,13 +462,15 @@ Installer size change after removing SPIRV-Cross.
 
 ## Project: Veloren
 
+![veloren](ProcessingShaders/veloren.jpg)
+
 [veloren/veloren#2749](https://gitlab.com/veloren/veloren/-/merge_requests/2749)
 
 Replacing `shaderc` with `naga`.
-Not a success story yet - got **reverted**
-because SPIRV-Cross weirdness, fixes needed to shaders
+Almost a success story - got reverted.
 
 <!--footer: '
+Hopefully temporary.
 Indexing constant arrays generates slow MSL code.
 '-->
 ---
@@ -463,12 +478,10 @@ Indexing constant arrays generates slow MSL code.
 
 ## Project: vange-rs
 
+![vange-rs](ProcessingShaders/vange-rs.png)
+
 [kvark/vange-rs#143](https://github.com/kvark/vange-rs/pull/143)
 All shaders are rewritten in WGSL.
-
----
-
-![shaderc-naga](ProcessingShaders/shaderc-naga.png)
 
 ---
 
@@ -477,11 +490,13 @@ All shaders are rewritten in WGSL.
 [magcious/noclip.website#8cd6ac7d](https://github.com/magcius/noclip.website/commit/b4505ea2b092d04dda14b8beb88d76aa8cd6ac7d#diff-29c41667cbbb64ae57bf69bc6b07f59f5b70309e3f2a6bcc186192ff3d9e4a6d)
 
 GLSL -> WGSL (via Naga) for WebGPU deployment
-WASM size: glslang = 1.04mb, naga = 0.56mb
+WASM size: `glslang` = 1.04mb, `naga` = 0.56mb
 
 ---
 
 ## Project: gfx-rs/portability
+
+![dota2](ProcessingShaders/dota-naga-hero.jpg)
 
 https://gfx-rs.github.io/2021/05/09/dota2-msl-compilation.html
 
@@ -499,6 +514,14 @@ SPIR-V isn't a good IR.
 
 3. Shader processing with Rust is fun!
 We are almost there ;)
+
+<!-- footer:'
+Specifically didn't talk about HLSL.
+' -->
+---
+<!-- footer:'' -->
+
+![shaderc-naga](ProcessingShaders/shaderc-naga.png)
 
 ---
 
