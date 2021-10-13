@@ -95,7 +95,7 @@ https://github.com/servo/webrender/wiki/Driver-issues
 > Currently shaderc can't be run in parallel at all, it will internally synchronize all threads in GlslangInitializer::Acquire which has a global mutex.
 
 <!-- footer: '
-C dependencies often dont like multi-threading.
+C dependencies often don't like multi-threading.
 ' -->
 ---
 <!-- footer: ''-->
@@ -145,7 +145,7 @@ if skip_objects && (
 
 [denoland/rusty_v8#465](https://github.com/denoland/rusty_v8/issues/465)
 
-> Because the different libc++ implementations aren't necessarily binary compatible, values end up being assigned wrong fields (e.g. c from above is assigned to the string's internal _size_ when rusty_v8 is loaded).
+> Because the different libc++ implementations aren't necessarily binary compatible, values end up being assigned wrong fields (e.g. _c_ from above is assigned to the string's internal _size_ when rusty_v8 is loaded).
 
 ---
 
@@ -222,7 +222,7 @@ But... `VkPipelineCache`
 
 https://therealmjp.github.io/posts/shader-permutations-part1/
 
-> t's true that D3D12 and Vulkan both provide mechanisms for manual caching of PSO's by the application, however these APIs tend to be complex and still don't help your "first boot" loading times.
+> It's true that D3D12 and Vulkan both provide mechanisms for manual caching of PSO's by the application, however these APIs tend to be complex and still don't help your "first boot" loading times.
 
 ---
 
@@ -270,9 +270,9 @@ http://kvark.github.io/spirv/2021/05/01/spirv-horrors.html
 
 ---
 
-### Few Issues
+### A Few Issues
 
-- multiple entry points are great concept that isn't tested, doesn't work properly
+- multiple entry points are a great concept that isn't tested, doesn't work properly
 - specification is effectively split in 3 documents
 - recovering control flow structure is hard
 
@@ -285,7 +285,7 @@ And glslc produces aweful code for constant arrays.
 ## WGSL
 
 Born at the start of 2020
-Designed to actually target other languges
+Designed to actually target other languages
 Sane
 
 ---
@@ -387,7 +387,7 @@ module **IR** | validator | derived info
 
 We tried many helper crates: `pest`, `glsl`/`nom`.
 *General issue*: split of responsibilities.
-Ended up with *recursive descend*.
+Ended up with *recursive descent*.
 
 ---
 
