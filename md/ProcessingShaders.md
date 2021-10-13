@@ -17,14 +17,22 @@ Story of working with shaders in Rust, building a new foundation for translating
 Dzmitry Malyshau
 Rust Los Angeles Meetup, 2021
 
+<!-- footer: '
+Greeting and introduction.
+' -->
 ---
+<!-- footer: '' -->
 
-Plan:
+Train stops:
   1. Surrounded by C
   2. In Rust We Trust
-  3. Results
+  3. Aftermath
 
+<!-- footer: '
+Prepare for technical dive, controversial statements, and memes.
+' -->
 ---
+<!-- footer: '' -->
 
 # Intro
 
@@ -56,7 +64,7 @@ GLSL, HLSL, MSL
 Both the languages look like C, and the tools are all in C.
 ' -->
 ---
-<!-- footer: ''-->
+<!-- footer: '' -->
 
 ## Level-1: Starter pack
 
@@ -99,13 +107,19 @@ https://github.com/servo/webrender/wiki/Driver-issues
 
 ### SPIR-V
 
-- standardized by Krhonos
-- binary format inspired by LLVM's IR
-- has a non-standard assembly form, only used for debugging
-- since it's IR-inspired and machine-readable, people are often inclined to read it and convert it to other shader languages
+![SPIR logo](ProcessingShaders/SPIR_logo.svg.png)
 
+- binary format inspired by LLVM's IR
+- standardized by Krhonos
+
+<!-- footer: '
+Has a non-standard assembly form, only used for debugging.
+
+Since its IR-inspired and machine-readable, people are often inclined to read it and convert it to other shader languages.
+' -->
 
 ---
+<!-- footer: '' -->
 
 ### Path: GLSL -> SPIR-V
 
@@ -133,16 +147,18 @@ https://github.com/servo/webrender/wiki/Driver-issues
 > Currently shaderc can't be run in parallel at all, it will internally synchronize all threads in GlslangInitializer::Acquire which has a global mutex.
 
 <!-- footer: '
-C dependencies often don't like multi-threading.
+C dependencies often dont like multi-threading.
 ' -->
 ---
 <!-- footer: ''-->
 
-Wait...
-Vulkan + SPIR-V
-non-portable?
+![Surprised about Vulkan portability](ProcessingShaders/VulkanNonPortable.jpg)
 
+<!-- footer: '
+Vulkan is 5.5 years old. Its quite portable, but non-conformant.
+' -->
 ---
+<!-- footer: ''-->
 
 ![Platforms map](ProcessingShaders/PlatformsMap.jpeg)
 
@@ -170,7 +186,7 @@ non-portable?
 
 [rust-lang/rust#66285](https://github.com/rust-lang/rust/issues/66285)
 
-> because the C++ files in the spirv_cross crate began with the spirv_cross prefix
+> because the C++ files in the `spirv_cross` crate began with the spirv_cross prefix
 
 ```rust
 if skip_objects && (
@@ -183,7 +199,7 @@ if skip_objects && (
 
 [denoland/rusty_v8#465](https://github.com/denoland/rusty_v8/issues/465)
 
-> Because the different libc++ implementations aren't necessarily binary compatible, values end up being assigned wrong fields (e.g. _c_ from above is assigned to the string's internal _size_ when rusty_v8 is loaded).
+> Because the different `libc++` implementations aren't necessarily binary compatible, values end up being assigned wrong fields (e.g. _c_ from above is assigned to the string's internal _size_ when rusty_v8 is loaded).
 
 ---
 
@@ -265,10 +281,18 @@ https://therealmjp.github.io/posts/shader-permutations-part1/
 ---
 
 ## Conclusion
-  - GLSL -> SPIR-V: 😬 painful 
-  - SPIR-V -> anything: 😩 even more so
 
+Shader solutions in C are OK 😬.
+A lot of gotchas and limitations.
+We can do much better!
+
+<!-- footer: '
+E.g. everything has to go through SPIR-V.
+Have to have Vulkan SDK installed.
+Hard to add advanced features. Etc.
+' -->
 ---
+<!-- footer: '' -->
 
 # Part II: In Rust We Trust
 
@@ -295,9 +319,9 @@ Let's take it as an IR.
 
 ### rspirv
 
-https://github.com/gfx-rs/rspirv
-[35 PRs](https://github.com/gfx-rs/rspirv/pulls?q=is%3Apr+author%3Akvark) later...
-Still a mess, not an IR.
+> Rust implementation of SPIR-V module processing functionalities
+
+[35 PRs](https://github.com/gfx-rs/rspirv/pulls?q=is%3Apr+author%3Akvark) later... Still a mess, not an IR.
 
 ---
 
@@ -318,13 +342,13 @@ http://kvark.github.io/spirv/2021/05/01/spirv-horrors.html
 And glslc produces aweful code for constant arrays.
 '-->
 ---
-<!-- footer:'' -->
+<!-- footer: '' -->
 
 ## WGSL
 
 Born at the start of 2020
 Designed to actually target other languages
-Sane
+Sane & portable semantics.
 
 ---
 
@@ -367,7 +391,7 @@ Initial architecture:
 
 ---
 
-### Why Rust?: enums
+### Rust: Enums
 
 Killer feature for compiler tech
 
@@ -382,9 +406,13 @@ pub enum Binding {
 }
 ```
 
+<!-- footer: '
+Exhaustive matching, value typing.
+' -->
 ---
+<!-- footer: '' -->
 
-### Why Rust?: tests
+### Rust: Integrated Docs and Tests
 
 ```rust
 #[test]
@@ -402,14 +430,29 @@ fn function_without_identifier() {
 }
 ```
 
+<!-- footer: '
+The API part has 50% comments
+' -->
 ---
+<!-- footer: '' -->
+
+### Rust: Pit of Success
+
+> Representations of code can get complicated really fast, but Rust's ownership rules force us to slow down, take a breath, and keep thing simple.
+
+<!-- footer: '
+Quote from @jimblandy
+' -->
+---
+<!-- footer: '' -->
 
 ### Principle: Cache-friendly
 
+![Naga containers](ProcessingShaders/NagaArrays.png)
+
 Everything is an array, indexed, grow-only.
 Very few heap allocations.
-*Types, constants, functions, expressions, etc*
-`indexmap` is nice
+`indexmap` for uniqeness.
 
 ---
 
@@ -433,8 +476,7 @@ Ended up with *recursive descent*.
 
 ### Naga: Snapshot Testing
 
-*Backends*: WGSL -> anything
-*Frontends*: anything -> WGSL
+Anything -> WGSL -> Anything
 
 <!--footer: '
 General testing approach is "defence in depth" -
@@ -555,16 +597,17 @@ SPIR-V isn't a good IR.
 3. Shader processing with Rust is fun!
 We are almost there ;)
 
-<!-- footer:'
-Specifically didn't talk about HLSL.
+<!-- footer: '
+Specifically didnt talk about HLSL.
 ' -->
 ---
-<!-- footer:'' -->
+<!-- footer: '' -->
 
 ![shaderc-naga](ProcessingShaders/shaderc-naga.png)
 
 ---
 
 # Thank you!
+Naga developers and early adopters
 
-Questions?
+## Questions?
