@@ -26,7 +26,31 @@ Plan:
 
 ---
 
+# Intro
+
+```glsl
+layout(set = 0, binding = 0) uniform sampler s_Height;
+layout(set = 0, binding = 1) uniform texture2D t_Height;
+
+layout(location = 0) out float o_Height;
+
+void main() {
+    ivec2 tc = ivec2(gl_FragCoord.xy * 2.0);
+    vec4 heights = vec4(
+        texelFetch(sampler2D(t_Height, s_Height), tc - ivec2(0, 0), 0).x,
+        texelFetch(sampler2D(t_Height, s_Height), tc - ivec2(0, 1), 0).x,
+        texelFetch(sampler2D(t_Height, s_Height), tc - ivec2(1, 0), 0).x,
+        texelFetch(sampler2D(t_Height, s_Height), tc - ivec2(1, 1), 0).x
+    );
+    o_Height = max(max(heights.x, heights.y), max(heights.z, heights.w));
+}
+```
+
+---
+
 # Part I: Surrounded by C
+
+GLSL, HLSL, MSL
 
 <!-- footer: '
 Both the languages look like C, and the tools are all in C.
@@ -73,12 +97,26 @@ https://github.com/servo/webrender/wiki/Driver-issues
 
 ---
 
-### GLSL -> SPIR-V
+### SPIR-V
 
-*Tooling*: `glslang` (via "shaderc")
-*Issues*: big C dependency, non-portable.
+- standardized by Krhonos
+- binary format inspired by LLVM's IR
+- has a non-standard assembly form, only used for debugging
+- since it's IR-inspired and machine-readable, people are often inclined to read it and convert it to other shader languages
+
 
 ---
+
+### Path: GLSL -> SPIR-V
+
+*Tooling*: `glslang` (via "shaderc")
+*Issues*: big C dependency, not quite as portable.
+
+<!-- footer: '
+"non-portable" refers to SPIR-V/Vulkan
+' -->
+---
+<!-- footer: '' -->
 
 ![ShaderC build times](ProcessingShaders/ShaderC-build.png)
 
@@ -121,7 +159,7 @@ non-portable?
 
 ---
 
-### GLSL -> SPIRV -> MSL/HLSL/GLSL/etc
+### Path: GLSL -> SPIRV -> MSL/HLSL/GLSL/etc
 
 *Tooling*: SPIRV-Cross
 *Issues*: huge C dependency, slow.
@@ -172,7 +210,7 @@ Run: everywhere
 
 ---
 
-### Rust -> SPIR-V -> other
+### Path: Rust -> SPIR-V -> other
 
 *Tooling*: 🐉 Rust-GPU
 *Issues*: Limited to build-time, no standard
@@ -369,7 +407,9 @@ fn function_without_identifier() {
 ### Principle: Cache-friendly
 
 Everything is an array, indexed, grow-only.
+Very few heap allocations.
 *Types, constants, functions, expressions, etc*
+`indexmap` is nice
 
 ---
 
@@ -435,7 +475,7 @@ Run: everywhere
 
 ---
 
-### WGSL/GLSL -> Naga IR -> other
+### Path: WGSL/GLSL -> Naga IR -> other
 
 *Tooling*: Naga
 *Issues*: lack of polish, limited features
