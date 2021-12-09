@@ -6,10 +6,24 @@ theme: uncover
 
 # wGPU Challenges
 
-Dzmitry Malyshau
+Dzmitry Malyshau, 2021
 
-Graphics Engineer @Mozilla,
-former Rockstar
+---
+<!-- footer: '' -->
+
+## About Me
+
+![Firefox/WebRender](WgpuChallenges/FirefoxDebug.jpg) ![GTA](WgpuChallenges/GTA5.jpg) ![Treasure Hunt](WgpuChallenges/JVL-TreasureHunt.jpg)
+
+- _Mozilla Firefox_
+- _Rockstar Games_
+- _JVL Inc game machines_
+- bunch of other things...
+
+---
+<!-- footer: '' -->
+
+![WebGPU Problems](WgpuChallenges/webgpu-problem.png)
 
 ---
 <!-- footer: '' -->
@@ -27,6 +41,11 @@ former Rockstar
 ## Problem-1: Cross APIs
 
 ![gecko task](WgpuChallenges/wgpu-pre-graph.png)
+
+---
+<!-- footer: '' -->
+
+![Platforms map](ProcessingShaders/PlatformsMap.jpeg)
 
 ---
 <!-- -->
@@ -128,7 +147,12 @@ Proof of concept took 1 month. Development is ongoing.
 ---
 <!-- footer: '' -->
 
-### Results
+![Naga architecture](WgpuChallenges/naga-architecture.png)
+
+---
+<!-- footer: '' -->
+
+### Native Path: Results
 
 ![WebGPU IR path results](WgpuChallenges/wgpu-ir-path.png)
 
@@ -148,7 +172,7 @@ Proof of concept took 1 month. Development is ongoing.
 ![wgpu texture usage](WgpuChallenges/wgpu-usages.png)
 
 ---
-<!-- -->
+<!-- footer: '' -->
 
 ### Solution-3b: Command Injection
 
@@ -158,7 +182,7 @@ Proof of concept took 1 month. Development is ongoing.
   Creating many small command buffers.
 ' -->
 ---
-<!-- -->
+<!-- footer: '' -->
 
 ## Problem-4: Multi-threading
 
@@ -176,12 +200,29 @@ Proof of concept took 1 month. Development is ongoing.
 ---
 <!-- footer: '' -->
 
+### Results
+
+- the only safe GPU abstraction in town
+- runs on everything (*)
+- accessible from Native (*) and Web
+
+<!-- footer: '
+ ... with help of Angle currently
+
+ Has bindings for C, D, Python, Java, Julia, etc
+' -->
+---
+<!-- footer: '' -->
+
 ## Lesson-1
 
 > Abstraction has to be driven by something.
 
-Anticipating future use isn't helpful.
+![Vangers raymip](WgpuChallenges/vangers-raymax-debug.png)
 
+<!-- footer: '
+Anticipating future use isn't helpful.
+' -->
 ---
 <!-- footer: '' -->
 
@@ -189,9 +230,12 @@ Anticipating future use isn't helpful.
 
 > Re-inventing things has its place.
 
+![wgpu Encounter](WgpuChallenges/wgpu-encounter.jpg)
+
+<!-- footer: '
 Existing solutions, like libraries, or standards,
 aren't always a good fit.
-
+' -->
 ---
 <!-- footer: '' -->
 
@@ -199,8 +243,11 @@ aren't always a good fit.
 
 > Community power is misleading.
 
-The only unstoppable power is a motivated individual.
+![wgpu Spaceship](WgpuChallenges/wgpu-spaceship.png)
 
+<!-- footer: '
+The only unstoppable power is a motivated individual.
+' -->
 ---
 <!-- footer: '' -->
 
