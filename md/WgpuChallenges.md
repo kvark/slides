@@ -61,21 +61,10 @@ Using gfx-portability and iterating on it.
 ---
 <!-- footer: '' -->
 
-#### Vulkanized: Pain Points
-  - Vulkan -> anything isn't that great
-  - WebGPU -> Vulkan loses some important bits
-  - still need a new WGSL frontend
-  - hard to integrate with SPIRV-Cross efficiently
-  - dependencies sppread across repos
-  - a lot of code!
+![Vulkanized pain points](WgpuChallenges/vulkanized-pain-points.png)
 
 <!-- footer: '
-Example: memory placement. Vulkan -> anything has to pretend it works,
-but WebGPU -> Vulkan could just use heaps in a restricted way.
-
-Similar example - command pools.
-Another example - command buffer reusability.
-Important bits lost: compute passes.
+  ... a lot of code
 ' -->
 
 ---
@@ -102,7 +91,7 @@ Important bits lost: compute passes.
 
 ![wgpu logo](WgpuChallenges/wgpu-logo.png)
 
-Effort: ~2 months to build from scratch.
+Effort: 2 months to build from scratch.
 
 ---
 <!-- footer: '' -->
@@ -112,6 +101,13 @@ Effort: ~2 months to build from scratch.
 No text SPIR-V, no C-like syntax.
 
 Hard safety and portability requirements.
+
+```rust
+[[stage(fragment)]]
+fn fs_extra() -> [[location(0)]] vec4<f32> {
+    return vec4<f32>(0.0, 0.5, 0.0, 0.5);
+}
+```
 
 ---
 <!-- footer: '' -->
@@ -132,9 +128,9 @@ Proof of concept took 1 month. Development is ongoing.
 ---
 <!-- footer: '' -->
 
-Result: 2x reduction in code size.
-Less pain to maintain, develop, and debug.
-More efficient on DX12 and Metal.
+### Results
+
+![WebGPU IR path results](WgpuChallenges/wgpu-ir-path.png)
 
 ---
 <!-- footer: '' -->
