@@ -1,6 +1,15 @@
-# baryon
+---
+title: Baryon
+tags: Talk
+description: Flexible prototyping engine.
+slideOptions:
+  theme: white
+---
+
+# Baryon
 
 Flexible prototyping engine.
+slides: https://hackmd.io/@kvark/baryon
 
 Dzmitry Malyshau
 
@@ -8,12 +17,10 @@ Dzmitry Malyshau
 
 ## History
 
-https://github.com/three-rs/three
+Three-rs:
 ![three-rs aviator](https://github.com/three-rs/three/raw/07e47da5e0673aa9a16526719e16debd59040eec/examples/aviator/shot.png)
 
 ---
-
-... the heart was in the right place
 
 ## Goals
 - easy to prototype (batteries included)
@@ -21,20 +28,29 @@ https://github.com/three-rs/three
 - scalable to a lot of entities
 - very little magic in the API
 
+<!-- the heart was in the right place -->
+
 ---
 
 What vertex format should I pick?
+
 What is exactly is a material?
+
 How much **opinion** do I need to have?
 
 ---
 
-![baryon layers](../baryon-layers.png)
+![nested core](https://i.imgur.com/WtEcI3V.png)
 
 ---
 
+## ECS
+
 How much would ECS help?
-Bevy, Rend3, and Dotrix - already use it, but very differently.
+
+Bevy, Rend3, and Dotrix - already use it,
+
+but very differently.
 
 ---
 
@@ -60,8 +76,9 @@ let mesh = rend3::types::MeshBuilder::new(vertex_positions.to_vec(), rend3::type
     .build() // produces `rend3::types::Mesh`
     .unwrap()
 let material = rend3_routine::pbr::PbrMaterial {
-    albedo: rend3_routine::pbr::AlbedoComponent::Value(glam::Vec4::new(0.0, 0.5, 0.5, 1.0)),
-    ..rend3_routine::pbr::PbrMaterial::default()
+    albedo: rend3_routine::pbr::AlbedoComponent::Value(
+        glam::Vec4::new(0.0, 0.5, 0.5, 1.0),
+    ), ..
 };
 let object = rend3::types::Object {
     mesh_kind: rend3::types::ObjectMeshKind::Static(renderer.add_mesh(mesh)),
@@ -83,16 +100,20 @@ let material = materials.add(StandardMaterial { // prelude
 commands.spawn_bundle(PbrBundle { // prelude
     mesh,
     material,
-    transform: Transform::from_xyz((x as f32) * 2.0, (y as f32) * 2.0, 0.0), // prelude
+    transform: Transform::from_xyz((x as f32) * 2.0, (y as f32) * 2.0, 0.0),
     ..Default::default()
 });
 ```
 
 ---
 
-Baryon (disclaimer):
-  - really just a toy
-  - not nearly as useful as all the engines here ^
+### Disclaimer!
+
+Baryon is really just a toy.
+
+Not nearly as useful as all the engines here.
+
+The core doesn't even know what a material is, or what is a vertex position!
 
 ---
 
@@ -134,12 +155,35 @@ context.present(&mut pass, &scene, &camera);
 
 ---
 
-![baryon components](../baryon-architecture.png)
+![baryon components](https://i.imgur.com/jLExkzX.png)
 
 ---
 
-Demo & Question time!
+Baryon (pass):
+```rust
+for (_, (entity, color)) in scene
+    .world
+    .query::<(&bc::Entity, &bc::Color)>()
+    .with::<bc::Vertex<crate::Position>>()
+    .iter()
+{
+    let space = &nodes[entity.node];
+    let mesh = context.get_mesh(entity.mesh);
+    ... // bind vertices, uniforms, etc
+    pass.draw(0..mesh.vertex_count, 0..1);
+}
+```
+
+---
+
+## Demo
 
 ![cubeception](https://github.com/kvark/baryon/raw/00460ffe2d75a146ef33160d95582d24c87ac78e/etc/cubeception.png)
+
+---
+
+## Questions
+
+This is probably impractical, but fun!
 
 ---
